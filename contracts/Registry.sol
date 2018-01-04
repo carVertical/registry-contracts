@@ -22,18 +22,38 @@ contract Registry is RBAC {
     address indexed _vehicle
   );
 
+  // ===== Modifiers =====
+  modifier uniqueVehicle(string _strVin) {
+    require(VinForAddress[_strVin] == address(0x0));
+    _;
+  }
+
   // ====== Functions ======
-  function registerVehicle(string _strVin, address _registrant) public payable
-  onlyAdmin
+  function registerVehicle(
+    string _strVin,
+    address _registrant
+  ) uniqueVehicle(_strVin) public payable onlyAdmin
   {
     address vehicle = new Vehicle(_strVin, _registrant);
     VinForAddress[_strVin] = vehicle;
     addVehicleClaim(_registrant, _strVin, vehicle);
   }
 
-  function addVehicleClaim(address _registrant, string _strVin, address _vehicleContract) public {
+  function addVehicleClaim(
+    address _registrant,
+    string _strVin,
+    address _vehicleContract
+  ) private
+  {
     ClaimedVehicleRecord(_registrant, Utilities.convertStringToBytes32(_strVin), _strVin, _vehicleContract);
   }
 
+  function vehicleAddress(
+    string _strVin
+  ) public view returns (address)
+  {
+    require(VinForAddress[_strVin] != address(0x0));
+    return VinForAddress[_strVin];
+  }
 
 }
