@@ -15,10 +15,10 @@ contract Vehicle is RBAC {
   }
 
   // ====== Modifiers ======
- /**
- * @dev modifier to scope access to registrants
- * // reverts
- */
+  /**
+  * @dev modifier to scope access to registrants
+  * // reverts
+  */
   modifier onlyRegistrant()
   {
     checkRole(registrant, REGISTRANT);

@@ -4,6 +4,8 @@ const RBAC = artifacts.require('./rbac/RBAC.sol');
 const Roles = artifacts.require('./rbac/Roles.sol');
 const Utilities = artifacts.require('./utilities/Utilities.sol');
 
+const OpenVehicle = artifacts.require('./OpenVehicle.sol');
+
 module.exports = function (deployer) {
   deployer.deploy(Roles);
   deployer.link(Roles, RBAC);
@@ -18,4 +20,6 @@ module.exports = function (deployer) {
   );
   deployer.link(Vehicle, Registry);
   deployer.deploy(Registry);
+  deployer.deploy(OpenVehicle);
+  deployer.link(OpenVehicle, Registry);
 };
