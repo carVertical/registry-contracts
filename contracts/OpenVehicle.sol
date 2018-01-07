@@ -4,6 +4,7 @@ pragma solidity ^0.4.18;
 contract OpenVehicle {
   address public registrant;
   string public vin;
+
   mapping(string => string) public techSpec;
 
   struct OdometerReading {
@@ -12,6 +13,9 @@ contract OpenVehicle {
   }
 
   OdometerReading public latestOdometerReading;
+
+  // Periodic Tech Inspection
+  uint256 public ptiValidUntil;
 
   function OpenVehicle(
     string _vin,
@@ -33,6 +37,11 @@ contract OpenVehicle {
     uint256 indexed _timestamp,
     uint256 indexed _event_time
   );
+  event AddPTIEvent(
+    uint256 _valid_until,
+    uint256 _timestamp,
+    uint256 indexed _event_time
+  );
 
   // ===== Functions =====
   function addOdometerRecord(
@@ -47,9 +56,26 @@ contract OpenVehicle {
     OdometerReadingEvent(_value, _timestamp, now);
   }
 
-  function addTechSpecPrameter(string _key, string _value) {
+  function addTechSpecValue(
+    string _key,
+    string _value
+  ) public
+  {
     techSpec[_key] = _value;
-    OdometerReadingEvent(_key, _value, now);
+    TechSpecEvent(_key, _value, now);
+  }
+
+  function addPTIRecord(
+    uint256 _valid_until,
+    uint256 _timestamp
+  ) public
+  {
+    ptiValidUntil = _valid_until;
+    AddPTIEvent(_valid_until, _timestamp, now);
+  }
+
+  function ptiIsValid() public view returns (bool) {
+    return ptiValidUntil > now;
   }
 
 }
