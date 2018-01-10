@@ -31,23 +31,35 @@ contract('Registry', function (accounts) {
     });
 
 
-    it('should create a new vehicle contract', function (done) {
+    it('should create a claimed vehicle contract', function (done) {
         Registry.deployed()
             .then(function (instance) {
                 meta = instance;
                 return meta.registerVehicle(
-                    'VINCHECK',
+                    'VIN123XYZ',
                     0xb5c97fa8bf32f30a71d4e02060e0559573c24cf9);
             })
             .then(function (result) {
-                console.log('logs');
-                //console.log(result);
-                done();
-            })
-            .catch(function (e) {
-                console.log(e);
+                assert.equal(result.receipt.status, 1);
                 done();
             });
+    });
+
+    it('should not create contract as it is already claimed', function (done) {
+        Registry.deployed()
+            .then(function (instance) {
+                meta = instance;
+                meta.registerVehicle(
+                    'VINCHECK123',
+                    0xb5c97fa8bf32f30a71d4e02060e0559573c24cf9);
+                return meta.registerVehicle(
+                    'VINCHECK123',
+                    0xb5c97fa8bf32f30a71d4e02060e0559573c24cf9);
+            }).catch(function(error) {
+                const revert = error.message.search('revert') >= 1;
+                assert.equal(revert, true);
+                done();
+        });
     });
 
 });

@@ -19,7 +19,7 @@ contract Registry is RBAC {
   // VehicleOwnership enumerator used to define a state
   // of it's ownership. Details about vehicle can be already
   // added to the database however vehicle itself is not claimed.
-  enum VehicleOwnership { Claimed, Unclaimed, Unkown }
+  enum VehicleOwnership { Unknown, Unclaimed, Claimed }
 
   // ===== Structures =====
   struct VehicleDetails {
