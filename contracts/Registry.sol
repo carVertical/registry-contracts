@@ -8,7 +8,7 @@ contract Registry is RBAC {
   address public creator;
   address public registrant;
   string public vin;
-  mapping(string => VehicleDetails) VinForAddress;
+  mapping(string => VehicleDetails) private VinForAddress;
 
     function Registry() public {
       creator = msg.sender;
@@ -37,8 +37,16 @@ contract Registry is RBAC {
     address indexed _vehicle
   );
 
+  // ===== Modifiers =====
+  modifier unclaimedVehicle(string _vin)
+  {
+    require(getVinState(_vin));
+    _;
+  }
+
   // ====== Functions ======
   function registerVehicle(string _strVin, address _registrant) public payable
+  unclaimedVehicle(_strVin)
   onlyAdmin
   {
     address vehicle = new Vehicle(_strVin, _registrant);
@@ -52,9 +60,17 @@ contract Registry is RBAC {
     ClaimedVehicleRecord(_registrant, Utilities.convertStringToBytes32(_strVin), _strVin, _vehicleContract);
   }
 
-  function getMapping(string _vin) public constant returns (address add) {
+  // get the address of a child Vehicle contract when searched by VIN
+  function getMapping(string _vin) public view returns (address add) {
     return VinForAddress[_vin].vehicleAddress;
   }
+
+  // get the boolean state of a child Vehicle contract when searched by VIN
+  // if vehicle is claimed, returns false, thus failing checks in modifier
+  function getVinState(string _vin) private view returns (bool){
+    return VehicleOwnership.Claimed != VinForAddress[_vin].state;
+  }
+
 
 
 }

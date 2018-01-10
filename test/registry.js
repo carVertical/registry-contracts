@@ -20,10 +20,7 @@ contract('Registry', function (accounts) {
                     0xb5c97fa8bf32f30a71d4e02060e0559573c24cf8);
             })
             .then(function (result) {
-                console.log('logs');
-                console.log(result);
                 const logs = result.logs[0].args;
-                console.log(logs);
                 assert.equal(logs._registrant, '0x79f17ef469eff6eeb18a1060bf8f554f00000000');
                 assert.equal(logs._vehicle, '0xb5c97fa8bf32ef3fdc87ff033eaeefe800000000');
                 assert.equal(logs._strVin, 'VIN123ABX456');
@@ -33,5 +30,24 @@ contract('Registry', function (accounts) {
             });
     });
 
+
+    it('should create a new vehicle contract', function (done) {
+        Registry.deployed()
+            .then(function (instance) {
+                meta = instance;
+                return meta.registerVehicle(
+                    'VINCHECK',
+                    0xb5c97fa8bf32f30a71d4e02060e0559573c24cf9);
+            })
+            .then(function (result) {
+                console.log('logs');
+                //console.log(result);
+                done();
+            })
+            .catch(function (e) {
+                console.log(e);
+                done();
+            });
+    });
 
 });
