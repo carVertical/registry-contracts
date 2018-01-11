@@ -85,7 +85,6 @@ contract('Registry', function (accounts) {
             .then(function(results) {
                 const before = results[0];
                 const after = results[1];
-                //assert.true(before.logs)
                 const beforeRes = before.logs.filter(function(obj, index){
                     return obj.event === 'RoleAdded';
                 });
@@ -97,15 +96,8 @@ contract('Registry', function (accounts) {
                 });
                 assert.equal(afterRes[0].args.addr, '0xb1a11aa1bf32f22bc0c5af543304066e00000000');
                 assert.equal(afterRes[0].args.roleName, 'registrant');
-
-                console.log('------');
                 done();
-            })
-            .catch(function(error) {
-                const revert = error.message.search('revert') >= 1;
-                assert.equal(revert, true);
-                done();
-        });
+            });
     });
 
 });
