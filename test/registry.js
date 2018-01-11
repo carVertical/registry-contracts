@@ -62,4 +62,50 @@ contract('Registry', function (accounts) {
         });
     });
 
+    /* Given the fact 'VINSHOULDTRANSFEROWNERSHIP123' was registered to
+        0xb5c97fa8bf32f30a71d4e02060e0559573c24cf9,
+        test the updateVehicleRegistrant function where
+        transfer of RBAC 'registrant' role should be transfered to
+        new address 0xb1a11aa1bf32f22bc0c5af543304066e00000000 and
+        old registrant removed
+     */
+    it('should transfer ownership', function (done) {
+        Registry.deployed()
+            .then(function (instance) {
+                meta = instance;
+                return Promise.all([
+                    meta.registerVehicle(
+                        'VINSHOULDTRANSFEROWNERSHIP123',
+                        0xb5c97fa8bf32f30a71d4e02060e0559573c24cf9),
+                    meta.updateVehicleRegistrant(
+                        'VINSHOULDTRANSFEROWNERSHIP123',
+                        0xb1a11aa1bf32f30a71d4e02060e0559573c24cf9)
+                ]);
+            })
+            .then(function(results) {
+                const before = results[0];
+                const after = results[1];
+                //assert.true(before.logs)
+                const beforeRes = before.logs.filter(function(obj, index){
+                    return obj.event === 'RoleAdded';
+                });
+                assert.equal(beforeRes[1].args.addr, '0xb5c97fa8bf32ef3fdc87ff033eaeefe800000000');
+                assert.equal(beforeRes[1].args.roleName, 'registrant');
+
+                const afterRes = after.logs.filter(function(obj, index){
+                    return obj.event === 'RoleAdded';
+                });
+                assert.equal(afterRes[0].args.addr, '0xb1a11aa1bf32f22bc0c5af543304066e00000000');
+                assert.equal(afterRes[0].args.roleName, 'registrant');
+
+                console.log('------');
+                done();
+            })
+            .catch(function(error) {
+                const revert = error.message.search('revert') >= 1;
+                assert.equal(revert, true);
+                done();
+        });
+    });
+
 });

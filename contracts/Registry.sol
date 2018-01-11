@@ -37,6 +37,7 @@ contract Registry is RBAC {
     address indexed _vehicle
   );
 
+
   // ===== Modifiers =====
   modifier unclaimedVehicle(string _vin)
   {
@@ -44,16 +45,31 @@ contract Registry is RBAC {
     _;
   }
 
+  modifier claimedVehicle(string _vin)
+  {
+    require(!getVinState(_vin));
+    _;
+  }
+
+
   // ====== Functions ======
   function registerVehicle(string _strVin, address _registrant) public payable
   unclaimedVehicle(_strVin)
-  onlyAdmin
   {
     address vehicle = new Vehicle(_strVin, _registrant);
     VinForAddress[_strVin].vehicleAddress = vehicle;
     VinForAddress[_strVin].registrantAddress = _registrant;
     VinForAddress[_strVin].state = VehicleOwnership.Claimed;
     addVehicleClaim(_registrant, _strVin, vehicle);
+  }
+
+  function updateVehicleRegistrant(string _strVin, address _registrant) public payable
+  claimedVehicle(_strVin)
+  {
+    VinForAddress[_strVin].registrantAddress = _registrant;
+    VinForAddress[_strVin].state = VehicleOwnership.Unclaimed;
+    Vehicle v = Vehicle(getMapping(_strVin));
+    v.transferRole(_registrant, 'registrant');
   }
 
   function addVehicleClaim(address _registrant, string _strVin, address _vehicleContract) public {
@@ -70,7 +86,6 @@ contract Registry is RBAC {
   function getVinState(string _vin) private view returns (bool){
     return VehicleOwnership.Claimed != VinForAddress[_vin].state;
   }
-
 
 
 }
