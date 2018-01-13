@@ -1,6 +1,7 @@
 pragma solidity ^0.4.4;
 
 import "./rbac/RBAC.sol";
+import "./common/VehicleHelper.sol";
 
 contract Vehicle is RBAC {
   address public registrant;
