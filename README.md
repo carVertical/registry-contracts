@@ -1,12 +1,12 @@
 # Registry Contracts
 
-An official caVertical repository for Vehicle, Registry and any additional supporting contracts. 
+An official carVertical repository for Vehicle, Registry and any additional supporting contracts. 
 
 
 ## Prerequisites and testing
 
 * Make sure truffle and testrpc are installed on dev machine
-* Start testchain `testrpc -m "one two three four five`
+* Start testchain `testrpc -m "one two three four five"`
 * `truffle test --network local`
 
 
