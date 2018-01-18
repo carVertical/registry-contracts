@@ -66,6 +66,7 @@ contract Vehicle is RBAC {
     uint256 indexed _event_time
   );
 
+
   // ===== Functions =====
   function addOdometerRecord(string recordHash, uint256 timestamp) public
   onlyAdminOrRegistrant
@@ -95,5 +96,13 @@ contract Vehicle is RBAC {
   onlyAdminOrRegistrant
   {
     SpecsRecord(recordHash, timestamp, now);
+  }
+
+  function transferRole(address _newRegistrant, string _role) public
+  onlyAdminOrRegistrant
+  {
+    addRole(_newRegistrant, _role);
+    removeRole(registrant, _role);
+    registrant = _newRegistrant;
   }
 }
